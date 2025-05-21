@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>WebSocket Клієнт</title>
+</head>
+<body>
+  <h1>WebSocket Клієнт</h1>
+
+  <button id="connectBtn">🔌 Підключитися</button>
+  <button id="disconnectBtn" disabled>❌ Відключитися</button>
+
+  <p id="status">Статус: 🔴 Відключено</p>
+
+  <div id="messages">
+    <h3>Отримані повідомлення:</h3>
+    <ul id="messageList"></ul>
+  </div>
+
+  <script>
+    let socket = null;
+
+    const connectBtn = document.getElementById('connectBtn');
+    const disconnectBtn = document.getElementById('disconnectBtn');
+    const status = document.getElementById('status');
+    const messageList = document.getElementById('messageList');
+
+    connectBtn.onclick = () => {
+      if (socket) return;
+
+      socket = new WebSocket('ws://localhost:8000/ws');
+
+      socket.onopen = () => {
+        status.textContent = 'Статус: 🟢 Підключено';
+        connectBtn.disabled = true;
+        disconnectBtn.disabled = false;
+      };
+
+      socket.onmessage = (event) => {
+        const item = document.createElement('li');
+        item.textContent = event.data;
+        messageList.appendChild(item);
+      };
+
+      socket.onclose = () => {
+        status.textContent = 'Статус: 🔴 Відключено';
+        connectBtn.disabled = false;
+        disconnectBtn.disabled = true;
+        socket = null;
+      };
+
+      socket.onerror = (error) => {
+        console.error('Помилка WebSocket:', error);
+      };
+    };
+
+    disconnectBtn.onclick = () => {
+      if (socket) {
+        socket.close();
+      }
+    };
+  </script>
+</body>
+</html>
