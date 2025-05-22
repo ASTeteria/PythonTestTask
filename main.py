@@ -15,12 +15,11 @@ shutdown_handler = GracefulShutdownHandler()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # --- Додана перевірка кількості воркерів ---
+    # Перевірка кількості воркерів
     workers_count = multiprocessing.cpu_count()
     if workers_count > 1:
         print("⚠️ Warning: This app may not support graceful shutdown with multiple workers.")
         print("ℹ️ Use 'uvicorn main:app --workers=1' for reliable WebSocket shutdown handling.")
-    # -------------------------------------------
 
     if shutdown_handler.is_main_worker():
         signal.signal(signal.SIGINT, shutdown_handler.initiate_shutdown)
@@ -30,9 +29,9 @@ async def lifespan(app: FastAPI):
 
     print("🚀 Server started and ready to accept WebSocket connections")
 
-    yield  # тут додаток працює
+    yield
 
-    # Код при завершенні Lifespan (shutdown)
+    # При завершенні Lifespan
     logging.info("🚫 Shutdown complete.")
 
 
