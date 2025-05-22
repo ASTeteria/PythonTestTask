@@ -16,7 +16,7 @@
 - **Uvicorn**
 - **WebSocket**
 - **asyncio**
-- **HTML/JavaScript (на стороні клієнта)**
+- **HTML/JavaScript**
 
 ---
 
